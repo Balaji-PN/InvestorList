@@ -40,9 +40,11 @@ import {
 } from "lucide-react";
 import { NoteDialog } from "@/components/note-dialog";
 import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 export const InvestorRow = ({ investor }: { investor: any }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
 
   const socialLinks = [
     { icon: Globe, label: "Website", link: investor.Website },
@@ -52,13 +54,22 @@ export const InvestorRow = ({ investor }: { investor: any }) => {
     { icon: Mail, label: "Email", link: `mailto:${investor["Partner Email"]}` },
   ];
 
-  const { data: note } = useQuery({
+  const { data: note, isLoading: isLoadingNote } = useQuery({
     queryKey: ["note", investor["S.no"]],
     queryFn: async () => {
-      const res = await fetch(`/api/notes?investorId=${investor["S.no"]}`);
-      if (!res.ok) return null;
-      return res.json();
+      try {
+        const res = await fetch(`/api/notes?investorId=${investor["S.no"]}`);
+        if (!res.ok) {
+          throw new Error("Failed to fetch note");
+        }
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        console.error("Error fetching note:", error);
+        return null;
+      }
     },
+    enabled: !!session?.user?.email,
   });
 
   return (
@@ -127,10 +138,11 @@ export const InvestorRow = ({ investor }: { investor: any }) => {
                     <NoteDialog
                       investorId={investor["S.no"].toString()}
                       existingNote={note?.content}
+                      isLoading={isLoadingNote}
                     />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Add Note</p>
+                    <p>{note?.content ? "Edit Note" : "Add Note"}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

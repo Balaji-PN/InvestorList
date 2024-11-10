@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,15 +20,26 @@ import { useQueryClient } from "@tanstack/react-query";
 interface NoteDialogProps {
   investorId: string;
   existingNote?: string;
+  isLoading?: boolean;
 }
 
-export function NoteDialog({ investorId, existingNote }: NoteDialogProps) {
+export function NoteDialog({
+  investorId,
+  existingNote,
+  isLoading: isLoadingNote,
+}: NoteDialogProps) {
   const { data: session } = useSession();
   const [note, setNote] = useState(existingNote || "");
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (existingNote !== undefined) {
+      setNote(existingNote);
+    }
+  }, [existingNote]);
 
   const handleSave = async () => {
     if (!session?.user) return;
@@ -42,7 +53,7 @@ export function NoteDialog({ investorId, existingNote }: NoteDialogProps) {
         },
         body: JSON.stringify({
           content: note.trim(),
-          investorId: investorId.toString(),
+          investorId,
         }),
       });
 
@@ -62,7 +73,8 @@ export function NoteDialog({ investorId, existingNote }: NoteDialogProps) {
       console.error("Error saving note:", error);
       toast({
         title: "Error saving note",
-        description: "There was a problem saving your note. Please try again.",
+        description:
+          error instanceof Error ? error.message : "Failed to save note",
         variant: "destructive",
       });
     } finally {
@@ -77,16 +89,21 @@ export function NoteDialog({ investorId, existingNote }: NoteDialogProps) {
           variant="outline"
           size="icon"
           className="relative hover:bg-secondary"
+          disabled={isLoadingNote}
         >
-          <StickyNote className="h-4 w-4" />
-          {existingNote && (
-            <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-primary" />
+          {isLoadingNote ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <StickyNote className="h-4 w-4" />
+          )}
+          {existingNote && !isLoadingNote && (
+            <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-primary animate-pulse" />
           )}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Investor Note</DialogTitle>
+          <DialogTitle>{existingNote ? "Edit Note" : "Add Note"}</DialogTitle>
           <DialogDescription>
             Add your private note about this investor. Only you can see this
             note.
@@ -102,7 +119,11 @@ export function NoteDialog({ investorId, existingNote }: NoteDialogProps) {
           />
         </div>
         <DialogFooter>
-          <Button onClick={handleSave} disabled={isLoading || !note.trim()}>
+          <Button
+            onClick={handleSave}
+            disabled={isLoading || !note.trim()}
+            className="w-full sm:w-auto"
+          >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
