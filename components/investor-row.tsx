@@ -112,8 +112,8 @@ export const InvestorRow = ({ investor }: { investor: any }) => {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 sm:gap-4 flex-shrink-0">
-              <div className="flex items-center gap-3 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0 overflow-x-auto sm:overflow-x-visible pb-2 sm:pb-0">
+              <div className="flex items-center gap-1 sm:gap-4">
                 <TooltipProvider delayDuration={0}>
                   {socialLinks.map(
                     (social, index) =>
@@ -123,7 +123,7 @@ export const InvestorRow = ({ investor }: { investor: any }) => {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="hover:bg-primary/10 transition-colors h-9 w-9 sm:h-10 sm:w-10"
+                              className="hover:bg-primary/10 transition-colors h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0"
                               asChild
                             >
                               <a
@@ -142,7 +142,7 @@ export const InvestorRow = ({ investor }: { investor: any }) => {
                         </Tooltip>
                       )
                   )}
-                  <div className="h-5 w-px bg-border mx-1 sm:mx-2" />
+                  <div className="h-5 w-px bg-border mx-1 sm:mx-2 flex-shrink-0" />
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <NoteDialog
@@ -156,21 +156,21 @@ export const InvestorRow = ({ investor }: { investor: any }) => {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              </div>
 
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="hover:bg-primary/10 transition-colors h-9 w-9 sm:h-10 sm:w-10"
-                >
-                  {isOpen ? (
-                    <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                  )}
-                </Button>
-              </CollapsibleTrigger>
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hover:bg-primary/10 transition-colors h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0"
+                  >
+                    {isOpen ? (
+                      <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                    )}
+                  </Button>
+                </CollapsibleTrigger>
+              </div>
             </div>
           </div>
         </CardHeader>
