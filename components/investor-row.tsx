@@ -76,9 +76,9 @@ export const InvestorRow = ({ investor }: { investor: any }) => {
     <Card className="w-full hover-scale transition-all border-opacity-40 hover:border-primary/60 hover:shadow-lg">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16 ring-2 ring-offset-2 ring-primary/20">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <Avatar className="h-12 w-12 sm:h-16 sm:w-16 ring-2 ring-offset-2 ring-primary/20 flex-shrink-0">
                 <AvatarImage
                   src={`https://placehold.co/200x200?text=${investor[
                     "Investor Name"
@@ -86,77 +86,88 @@ export const InvestorRow = ({ investor }: { investor: any }) => {
                   alt={investor["Investor Name"]}
                   className="object-cover"
                 />
-                <AvatarFallback className="bg-gradient-to-br from-primary/80 to-primary/40 text-white text-xl">
+                <AvatarFallback className="bg-gradient-to-br from-primary/80 to-primary/40 text-white text-lg sm:text-xl">
                   {investor["Investor Name"].charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <CardTitle className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+              <div className="min-w-0">
+                <CardTitle className="text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60 truncate">
                   {investor["Investor Name"]}
                 </CardTitle>
-                <CardDescription className="flex items-center gap-2 mt-1">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  {investor.Location}
-                  <span className="text-muted-foreground">•</span>
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  Founded {investor["Founding Year"]}
+                <CardDescription className="flex flex-wrap items-center gap-2 mt-1 text-sm">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
+                    <span className="truncate">{investor.Location}</span>
+                  </div>
+                  <span className="text-muted-foreground hidden sm:inline">
+                    •
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
+                    <span className="truncate">
+                      Founded {investor["Founding Year"]}
+                    </span>
+                  </div>
                 </CardDescription>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <TooltipProvider>
-                {socialLinks.map(
-                  (social, index) =>
-                    social.link && (
-                      <Tooltip key={index}>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="hover:bg-primary/10 transition-colors"
-                            asChild
-                          >
-                            <a
-                              href={social.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-primary/80 hover:text-primary"
+            <div className="flex items-center justify-end gap-3 sm:gap-4 flex-shrink-0">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <TooltipProvider delayDuration={0}>
+                  {socialLinks.map(
+                    (social, index) =>
+                      social.link && (
+                        <Tooltip key={index}>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="hover:bg-primary/10 transition-colors h-9 w-9 sm:h-10 sm:w-10"
+                              asChild
                             >
-                              <social.icon className="h-4 w-4" />
-                            </a>
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{social.label}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    )
-                )}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <NoteDialog
-                      investorId={investor["S.no"].toString()}
-                      existingNote={note?.content}
-                      isLoading={isLoadingNote}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{note?.content ? "Edit Note" : "Add Note"}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                              <a
+                                href={social.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary/80 hover:text-primary flex items-center justify-center"
+                              >
+                                <social.icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                              </a>
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom">
+                            <p>{social.label}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )
+                  )}
+                  <div className="h-5 w-px bg-border mx-1 sm:mx-2" />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <NoteDialog
+                        investorId={investor["S.no"].toString()}
+                        existingNote={note?.content}
+                        isLoading={isLoadingNote}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <p>{note?.content ? "Edit Note" : "Add Note"}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
 
               <CollapsibleTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="hover:bg-primary/10 transition-colors"
+                  className="hover:bg-primary/10 transition-colors h-9 w-9 sm:h-10 sm:w-10"
                 >
                   {isOpen ? (
-                    <ChevronUp className="h-4 w-4 text-primary" />
+                    <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                   ) : (
-                    <ChevronDown className="h-4 w-4 text-primary" />
+                    <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                   )}
                 </Button>
               </CollapsibleTrigger>
@@ -166,7 +177,7 @@ export const InvestorRow = ({ investor }: { investor: any }) => {
 
         <CollapsibleContent className="animate-in">
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <StatCard
                 title="Fund Type"
                 value={investor["Fund Type"]}
@@ -191,10 +202,10 @@ export const InvestorRow = ({ investor }: { investor: any }) => {
 
             {investor["Partner Name"] && (
               <div className="flex items-center gap-3 p-4 bg-secondary/10 rounded-lg">
-                <User2 className="h-5 w-5 text-primary" />
+                <User2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 <div>
-                  <p className="font-medium">Partner</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="font-medium text-sm sm:text-base">Partner</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     {investor["Partner Name"]}
                   </p>
                 </div>
@@ -215,13 +226,13 @@ interface StatCardProps {
 
 function StatCard({ title, value, icon: Icon }: StatCardProps) {
   return (
-    <div className="flex items-center gap-3 p-4 bg-secondary/10 rounded-lg hover:bg-secondary/20 transition-colors">
-      <div className="p-2 bg-primary/10 rounded-full">
-        <Icon className="h-5 w-5 text-primary" />
+    <div className="flex items-center gap-3 p-3 sm:p-4 bg-secondary/10 rounded-lg hover:bg-secondary/20 transition-colors">
+      <div className="p-1.5 sm:p-2 bg-primary/10 rounded-full">
+        <Icon className="h-4 w-12 sm:h-5 sm:w-5 text-primary" />
       </div>
       <div>
-        <p className="text-sm text-muted-foreground">{title}</p>
-        <p className="font-semibold">{value}</p>
+        <p className="text-xs sm:text-sm text-muted-foreground">{title}</p>
+        <p className="text-sm sm:text-base font-semibold">{value}</p>
       </div>
     </div>
   );
