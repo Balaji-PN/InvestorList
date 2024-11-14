@@ -1,46 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { NoteDialog } from "@/components/note-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardHeader,
-  CardTitle,
   CardContent,
   CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useQuery } from "@tanstack/react-query";
 import {
+  Award,
+  Briefcase,
+  Calendar,
   ChevronDown,
   ChevronUp,
-  Globe,
-  Twitter,
-  Linkedin,
   Facebook,
+  Globe,
+  Linkedin,
+  LucideIcon,
   Mail,
-  Briefcase,
+  MapPin,
   Target,
   TrendingUp,
-  Award,
+  Twitter,
   User2,
-  MapPin,
-  Calendar,
-  LucideIcon,
 } from "lucide-react";
-import { NoteDialog } from "@/components/note-dialog";
-import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 export const InvestorRow = ({ investor }: { investor: any }) => {
   const [isOpen, setIsOpen] = useState(false);
