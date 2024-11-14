@@ -28,10 +28,20 @@ const handler = NextAuth({
       }
       return session;
     },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    }
   },
   session: {
     strategy: "jwt",
   },
+  secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    signIn: '/signin',
+  }
 });
 
 export { handler as GET, handler as POST };

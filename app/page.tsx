@@ -6,14 +6,17 @@ import { ClientHome } from "@/components/client-home";
 export default async function Home() {
   const session = await getServerSession();
 
-  if (!session) {
-    redirect("/api/auth/signin");
+  if (!session?.user) {
+    redirect("/signin");
   }
 
-  const user = await prisma.user.findUnique({
-    where: { email: session.user?.email! },
-    select: { isAdmin: true },
-  });
+  let user = null;
+  if (session.user.email) {
+    user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { isAdmin: true },
+    });
+  }
 
   const assets = await prisma.asset.findMany({
     orderBy: {
@@ -21,5 +24,5 @@ export default async function Home() {
     },
   });
 
-  return <ClientHome initialAssets={assets} isAdmin={user?.isAdmin || false} />;
+  return <ClientHome initialAssets={assets} isAdmin={user?.isAdmin ?? false} />;
 }

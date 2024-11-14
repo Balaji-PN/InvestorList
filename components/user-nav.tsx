@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSession, signOut } from "next-auth/react";
-import { LogOut, User } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 export function UserNav() {
   const { data: session } = useSession();
@@ -47,7 +47,7 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => signOut()}
+          onClick={() => signOut({ redirect: true })}
           className="text-red-600 focus:text-red-600 cursor-pointer p-3"
         >
           <LogOut className="mr-2 h-4 w-4" />
