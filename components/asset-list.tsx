@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Asset } from "@prisma/client";
 import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,14 +12,19 @@ import { useRouter } from "next/navigation";
 interface AssetListProps {
   initialAssets: Asset[];
   isAdmin?: boolean;
+  onAssetsChange?: (assets: Asset[]) => void;
 }
 
-export function AssetList({ initialAssets, isAdmin }: AssetListProps) {
+export function AssetList({ initialAssets, isAdmin, onAssetsChange }: AssetListProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [assets, setAssets] = useState(initialAssets);
   const [deleteAssetId, setDeleteAssetId] = useState<string | null>(null);
   const { toast } = useToast();
   const router = useRouter();
+
+  useEffect(() => {
+    setAssets(initialAssets);
+  }, [initialAssets]);
 
   const nextSlide = () => {
     setCurrentIndex((prev) => 
@@ -33,6 +38,12 @@ export function AssetList({ initialAssets, isAdmin }: AssetListProps) {
     );
   };
 
+  useEffect(() => {
+    if (currentIndex >= assets.length) {
+      setCurrentIndex(Math.max(0, assets.length - 3));
+    }
+  }, [assets.length, currentIndex]);
+
   const handleDeleteAsset = async () => {
     if (!deleteAssetId) return;
 
@@ -45,12 +56,14 @@ export function AssetList({ initialAssets, isAdmin }: AssetListProps) {
         throw new Error('Failed to delete asset');
       }
 
-      setAssets(assets.filter(asset => asset.id !== deleteAssetId));
+      const newAssets = assets.filter(asset => asset.id !== deleteAssetId);
+      setAssets(newAssets);
+      onAssetsChange?.(newAssets);
+      
       toast({
         title: "Success",
         description: "Asset deleted successfully",
       });
-      router.refresh();
     } catch (error) {
       toast({
         title: "Error",

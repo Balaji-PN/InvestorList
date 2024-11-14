@@ -17,13 +17,15 @@ import { UploadButton } from "@/lib/uploadthing";
 import Image from "next/image";
 import { Loader2, X } from "lucide-react";
 import type { OurFileRouter } from "@/app/api/uploadthing/core";
+import { Asset } from "@prisma/client";
 
 interface AddAssetDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onAssetAdded?: (asset: Asset) => void;
 }
 
-export function AddAssetDialog({ open, onOpenChange }: AddAssetDialogProps) {
+export function AddAssetDialog({ open, onOpenChange, onAssetAdded }: AddAssetDialogProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -51,12 +53,14 @@ export function AddAssetDialog({ open, onOpenChange }: AddAssetDialogProps) {
         throw new Error("Failed to create asset");
       }
 
+      const newAsset = await response.json();
+      onAssetAdded?.(newAsset);
+
       toast({
         title: "Success",
         description: "Asset created successfully",
       });
 
-      router.refresh();
       onOpenChange(false);
       // Reset form
       setTitle("");

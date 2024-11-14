@@ -4,6 +4,7 @@ import { AddAssetButton } from "@/components/add-asset-button";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function AdminPage() {
   const [assets, setAssets] = useState<Array<{ id: string; url: string }>>([]);
@@ -30,11 +31,14 @@ export default function AdminPage() {
             >
               <X className="h-4 w-4" />
             </Button>
-            <img
-              src={asset.url}
-              alt="Asset"
-              className="w-full h-48 object-cover rounded-md"
-            />
+            <div className="relative w-full h-48">
+              <Image
+                src={asset.url}
+                alt="Asset"
+                fill
+                className="object-cover rounded-md"
+              />
+            </div>
           </div>
         ))}
         <AddAssetButton isAdmin={true} />
