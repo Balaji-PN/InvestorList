@@ -1,11 +1,39 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function SignIn() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    async function checkSubscription() {
+      if (session) {
+        const subscription = await fetch("/api/check-subscription").then((res) =>
+          res.json()
+        );
+        const hasSubscription = subscription.isValid;
+
+        if (hasSubscription) {
+          router.push("/dashboard");
+        } else {
+          router.push("/subscription");
+        }
+      }
+    }
+
+    checkSubscription();
+  }, [session, router]);
+
+  // If loading, you might want to show a loading state
+  if (status === "loading") {
+    return null; // Or a loading spinner
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-4">
       <Card className="w-full max-w-md">
@@ -21,7 +49,7 @@ export default function SignIn() {
           </p>
 
           <Button
-            onClick={() => signIn("google", { callbackUrl: "/" })}
+            onClick={() => signIn("google")}
             variant="outline"
             className="w-full flex items-center justify-center gap-3 h-12 text-base"
           >

@@ -1,9 +1,28 @@
+"use client";
+
 import { UserNav } from "@/components/user-nav";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 
-export async function NavBar({ user }: { user: boolean | null }) {
+export function NavBar({ user }: { user: boolean | null }) {
+  const { data: session } = useSession();
+  const [hasValidSubscription, setHasValidSubscription] = useState(false);
+
+  useEffect(() => {
+    const checkSubscription = async () => {
+      if (session?.user) {
+        const response = await fetch("/api/check-subscription");
+        const { isValid } = await response.json();
+        setHasValidSubscription(isValid);
+      }
+    };
+
+    checkSubscription();
+  }, [session]);
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-20 items-center justify-between px-4">
@@ -18,12 +37,22 @@ export async function NavBar({ user }: { user: boolean | null }) {
             </h1>
             <ArrowUpRight className="h-5 w-5 text-primary transition-transform duration-300 group-hover:rotate-45" />
           </Link>
-          <Link
-            href="/investors"
-            className="text-lg font-medium hover:text-primary transition-colors"
-          >
-            Investors
-          </Link>
+          {session && hasValidSubscription && (
+            <>
+              <Link
+                href="/investors"
+                className="text-lg font-medium hover:text-primary transition-colors"
+              >
+                Investors
+              </Link>
+              <Link
+                href="/dashboard"
+                className="text-lg font-medium hover:text-primary transition-colors"
+              >
+                Dashboard
+              </Link>
+            </>
+          )}
           {user && (
             <Link
               href="/admin"
