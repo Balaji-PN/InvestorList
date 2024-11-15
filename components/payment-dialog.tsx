@@ -29,7 +29,7 @@ export function PaymentDialog({ children, userId }: { children: React.ReactNode;
   useEffect(() => {
     const checkSubscription = async () => {
       try {
-        const response = await fetch(`/api/check-subscription?userId=${userId}`);
+        const response = await fetch(`/api/check-prev-subs?email=${userId}`);
         const data = await response.json();
         setAmount(data.hadPreviousSubscription ? 30000 : 270000);
       } catch (error) {

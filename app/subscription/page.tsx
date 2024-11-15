@@ -23,7 +23,7 @@ export default function SubscriptionPage() {
       if (session?.user?.email) {
         try {
           const response = await fetch(
-            `/api/check-subscription?userId=${session.user.email}`
+            `/api/check-prev-subs?email=${session.user.email}`
           );
           const data = await response.json();
           setHadPreviousSubscription(data.hadPreviousSubscription);
